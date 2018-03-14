@@ -29,7 +29,7 @@ except OSError as e:
 
 # write the FEBio script
 with open(script_name, "w") as script_file:
-    script_file.write("#!/bin/bash\n" + FEBIO_LOCATION + " -i $1 -o $1")
+    script_file.write("#!/bin/bash\n" + FEBIO_LOCATION + " -i $1")
     
 # make the script executable
 st = os.stat(script_name)
