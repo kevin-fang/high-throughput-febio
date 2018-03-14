@@ -1,0 +1,21 @@
+# HTCondor configuration file
+#
+# Configuration placed into this file extends/overwrites the settings in the
+# main HTCondor configuration at /etc/condor/condor_config.
+# It may be advantagous to leave the main configuration file pristine and put
+# local configuration here to ease configuration updates during upgrades of the
+# HTCondor Debian package. Alternatively, it is also possible to place additional
+# configuration files into /etc/condor/config.d that will take precedence over
+# both the main configuration file and this local configuration. Note that
+# DebConf-generated configuration will overwrite settings in this file.
+CONDOR_HOST = 192.168.0.101
+ALLOW_WRITE = 192.168.0.*
+FLOCK_FROM = 192.168.0.*
+FLOCK_TO = 192.168.0.*
+ALLOW_NEGOTIATOR = $(CONDOR_HOST)
+ALLOW_NEGOTIATOR_SCHEDD = $(ALLOW_NEGOTIATOR)
+HOSTALLOW_CONFIG = 192.168.0.101
+CONDOR_ADMIN = medialab@192.168.0.101
+NEGOTIATOR_HOST = $(CONDOR_HOST)
+SLOT_TYPE_1 = cpus=2, ram=2048
+NUM_SLOTS_TYPE_1 = 1
