@@ -14,9 +14,11 @@ job_name = project_name + ".sub"
 log_name = project_name + ".log"
 output_name = project_name + ".output"
 
+FEBIO_LOCATION = '/home/medialab/febio-2.6.4/bin/febio2.lnx64'
+
 # write the script to a file
 with open(script_name, "w") as script_file:
-    script_file.write("#!/bin/bash\n/home/medialab/febio-2.6.4/bin/febio2.lnx64 -i " + filename + '\n')
+    script_file.write("#!/bin/bash\n" + FEBIO_LOCATION + " -i " + filename + '\n')
 # make the script executable
 st = os.stat(script_name)
 os.chmod(script_name, st.st_mode | stat.S_IEXEC | stat.S_IXGRP | stat.S_IXOTH)
