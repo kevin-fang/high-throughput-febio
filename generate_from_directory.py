@@ -42,6 +42,7 @@ def generate_job(filename, input_dir):
 transfer_input_files = {input_dir}/{filename}
 output = output/{truncated_filename}.out
 error = output/{truncated_filename}.err
+transfer_output_files = {truncated_filename}.xplt, {truncated_filename}.log
 log = output/{truncated_filename}.log
 transfer_output_remaps = \"{truncated_filename}.xplt=./output/{truncated_filename}.xplt; {truncated_filename}.log=./output/{truncated_filename}.log\"
 queue
