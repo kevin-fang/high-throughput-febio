@@ -24,12 +24,12 @@ os.chmod(script_name, st.st_mode | stat.S_IEXEC | stat.S_IXGRP | stat.S_IXOTH)
 # generate the condor job
 with open(job_name, "w") as job_file:
     job_file.write("""executable = {0}
-        log = {1}
-        output = {2}
-        arguments = \"{3}\"
-        transfer_input_files = {4}
-        error = error.txt
-        should_transfer_files = Yes
-        queue\n""".format(script_name, log_name, output_name, filename, filename))
+log = {1}
+output = {2}
+arguments = \"{3}\"
+transfer_input_files = {4}
+error = error.txt
+should_transfer_files = Yes
+queue\n""".format(script_name, log_name, output_name, filename, filename))
 
 print("Successfully created condor job files. Script is located at {}, submission is located at {}".format(script_name, job_name))

@@ -40,3 +40,39 @@ slot8@medialab-3Ma LINUX      X86_64 Unclaimed Idle      0.000  996  0+01:00:03
 
                Total    16     0       0        16       0          0        0
 ```
+
+To set the specs on each machine, modify `/etc/condor/condor_config.local` with the following settings (by default the machine will evenly divide its RAM among its CPUS and create a machine on HTCondor for each):
+
+Define slot types like so:  
+`SLOT_TYPE_<NUM> = cpus=<number of cpus>, ram=<amount of ram>, disk=<amount of disk space>`. 
+
+You can set an arbitrary number of slot types. To make a machine with 4 CPU cores, 8 GB RAM, and 4 GB HDD space, add this to the config:  
+`SLOT_TYPE_1 = cpus=4, ram=8192, disk=4096`.
+
+If there were 2 CPU cores and 2 GB RAM remaining, you would add:  
+`SLOT_TYPE_2 = cpus=2, ram=2048` to the local config.
+
+Once slot types are defined, in the same file `condor_config.local` define how much of each slot type will be available on the network with `NUM_SLOTS_TYPE_<NUM>`:
+
+For example, for the machine above you would include:  
+```
+NUM_SLOTS_TYPE_1 = 1
+NUM_SLOTS_TYPE_2 = 1
+```
+
+In the end, this is what the local config would look like:
+```
+CONDOR_HOST = 192.168.0.101
+ALLOW_WRITE = 192.168.0.*
+FLOCK_FROM = 192.168.0.*
+FLOCK_TO = 192.168.0.*
+ALLOW_NEGOTIATOR = $(CONDOR_HOST)
+ALLOW_NEGOTIATOR_SCHEDD = $(ALLOW_NEGOTIATOR)
+HOSTALLOW_CONFIG = 192.168.0.101
+CONDOR_ADMIN = medialab@192.168.0.101
+NEGOTIATOR_HOST = $(CONDOR_HOST)
+SLOT_TYPE_1 = cpus=4, ram=8192, disk=4096
+SLOT_TYPE_2 = cpus=2, ram=2048
+NUM_SLOTS_TYPE_1 = 1
+NUM_SLOTS_TYPE_2 = 1
+``` 
