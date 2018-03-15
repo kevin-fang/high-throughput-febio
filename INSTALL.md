@@ -1,5 +1,14 @@
-## How to install HTCondor on new machines
+## Install HTCondor on new machines
 
+### Installing through Docker (preferred method, much easier):  
+- Install Docker.  
+- Navigate to the `docker_install` directory.  
+- In the `Dockerfile`, modify the line `wget --output-document=condor_config.local https://raw.githubusercontent.com/kevin-fang/high-throughput-febio/master/sample_condor_config.local` so that it will download a correct condor_config.local from the internet (create your own condor_config.local so it follows the format below and upload it to Dropbox/Google Drive/another cloud hosting service).  
+- Run `docker build -t condor .`; after it is finished, run `docker images` and check that there is an image present called "condor".  
+- Run `docker run -it condor /bin/bash && /etc/init.d/condor start`. Leave the terminal running in the background. 
+- To automatically run condor on startup on your computer, add that command to `/etc/rc.local` (given that the machine runs Linux) on *your* machine, *not* the Docker image. 
+
+### Native Installation:  
 Install the basic package with `sudo apt-get install htcondor`. Modify `/etc/condor/condor_config.local` to have the following text:
 
 ```
