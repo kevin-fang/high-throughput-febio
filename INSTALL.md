@@ -15,8 +15,6 @@ Install the basic package with `sudo apt-get install htcondor`. Modify `/etc/con
 ```
 CONDOR_HOST = <host ip address - e.g. 192.168.0.101>
 ALLOW_WRITE = <network of ip addresses - e.g. 192.168.0.*>
-FLOCK_FROM = <network of ip addresses - e.g. 192.168.0.*>
-FLOCK_TO = <network of ip addresses - e.g. 192.168.0.*>
 ALLOW_NEGOTIATOR = $(CONDOR_HOST)
 ALLOW_NEGOTIATOR_SCHEDD = $(ALLOW_NEGOTIATOR)
 HOSTALLOW_CONFIG = $(CONDOR_HOST)
