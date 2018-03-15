@@ -37,6 +37,7 @@ os.chmod(script_name, st.st_mode | stat.S_IEXEC | stat.S_IXGRP | stat.S_IXOTH)
 
 # generate a job from a filenmae
 def generate_job(filename, input_dir):
+    # remove the .feb extension
     truncated_filename = filename[0:-4]
     return """arguments = {filename}
 transfer_input_files = {input_dir}/{filename}
@@ -60,6 +61,7 @@ universe = Vanilla
 should_transfer_files = Yes
 request_memory = {}
 request_cpus = {}
+
 """.format(ram_req, cpu_req))
     # iterate through the feb directory, adding a job for each one
     for filename in os.listdir(folder_name):
