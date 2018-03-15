@@ -5,11 +5,13 @@
 ### Installing through Docker (preferred method, much easier):  
 - Install [Docker](https://www.docker.com/) on any machine (Linux, Windows, Mac). Note that running from startup is much easier on Linux machines. 
 - Run `git clone https://github.com/kevin-fang/high-throughput-febio` and navigate to the `docker_install` directory.  
-- In the `Dockerfile`, modify the line `wget --output-document=condor_config.local https://raw.githubusercontent.com/kevin-fang/high-throughput-febio/master/sample_condor_config.local` so that it will points to a corrected condor_config.local from the internet (create your own condor_config.local so it follows the format below and upload it to Dropbox/Google Drive/another cloud hosting service). Note the condor configuration file cannot be changed after you build the docker image. You can always rebuild the image with a corrected file, though.  
-- Build the docker image with `docker build -t condor .` After it finishes (it will take a few minutes), run `docker images` and check that there is an image present called "condor".  
-- Run `docker run -itd --name=condor_docker condor /bin/bash && docker exec condor_docker /etc/init.d/condor start`
-- To stop the container, run `docker exec condor_docker /etc/init.d/condor stop && docker kill condor_docker`
-- To automatically run condor every time your computer turns on, add the start command to `/etc/rc.local` (on Linux ) on *your* machine.
+- Modify `config_maker.py` to match your specifications (see below), then run `pip install requests && python config_maker.py`. Copy the URL provided.
+- In the `Dockerfile`, modify the line `wget --output-document=condor_config.local <url>` so that it will point to the link just copied.
+	- Note the condor configuration file cannot be changed after you build the docker image. You can always rebuild the image with a corrected file, though.  
+- Build the docker image with `docker build -t condor .` After it finishes (it will take a few minutes), run `docker images` and check that there is an image called "condor" present.  
+- Run `docker run -itd --name=condor_docker condor /bin/bash && docker exec condor_docker /etc/init.d/condor start` to start the condor node.
+- To stop the node, run `docker exec condor_docker /etc/init.d/condor stop && docker kill condor_docker`
+- To automatically run condor every time your computer turns on, add the start command to `/etc/rc.local` (Linux only) on your machine.
 
 ### Native Installation:  
 Install the basic package with `sudo apt-get install htcondor` Modify `/etc/condor/condor_config.local` to have the following text:
@@ -24,7 +26,11 @@ CONDOR_ADMIN = <user on the central manager machine - e.g. medialab@192.168.0.10
 NEGOTIATOR_HOST = $(CONDOR_HOST)
 ``` 
 
-Restart the condor instance with `sudo /etc/init.d/condor restart`. Under `condor_status`, every machine with the correct `condor_config.local` settings should appear. For example:
+Restart the condor instance with `sudo /etc/init.d/condor restart`. 
+
+## Verifying the installation
+
+Under `condor_status`, every machine with the correct `condor_config.local` settings should appear. For example:
 ```
 Name               OpSys      Arch   State     Activity LoadAv Mem   ActvtyTime
 
@@ -50,6 +56,8 @@ slot8@medialab-3Ma LINUX      X86_64 Unclaimed Idle      0.000  996  0+01:00:03
 
                Total    16     0       0        16       0          0        0
 ```
+
+### Setting condor_config.local
 
 To set the specs on each machine, modify `/etc/condor/condor_config.local` with the following settings (by default the machine will evenly divide its RAM among its CPUS and create a machine on HTCondor for each):
 
