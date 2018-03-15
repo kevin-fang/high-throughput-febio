@@ -2,7 +2,7 @@
 
 ### Installing through Docker (preferred method, much easier):  
 - Install Docker on any machine (Linux, Windows, Mac).  
-- Navigate to the `docker_install` directory.  
+- Run `git clone https://github.com/kevin-fang/high-throughput-febio` and navigate to the `docker_install` directory.  
 - In the `Dockerfile`, modify the line `wget --output-document=condor_config.local https://raw.githubusercontent.com/kevin-fang/high-throughput-febio/master/sample_condor_config.local` so that it will points to a corrected condor_config.local from the internet (create your own condor_config.local so it follows the format below and upload it to Dropbox/Google Drive/another cloud hosting service). Note the condor configuration file cannot be changed after you build the docker image. You can always rebuild the image with a corrected file, though.  
 - Build the docker image with `docker build -t condor .`. After it finishes (it will take a few minutes), run `docker images` and check that there is an image present called "condor".  
 - Run `docker run -itd --name=condor_docker condor /bin/bash && docker exec condor_docker /etc/init.d/condor start`. 
