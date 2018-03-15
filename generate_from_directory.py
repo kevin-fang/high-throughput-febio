@@ -58,8 +58,9 @@ with open(job_name, "w") as job_file:
 executable = febio.sh
 universe = Vanilla
 should_transfer_files = Yes
-
-""")
+request_memory = {}
+request_cpus = {}
+""".format(ram_req, cpu_req))
     # iterate through the feb directory, adding a job for each one
     for filename in os.listdir(folder_name):
         if filename.endswith(".feb"):
