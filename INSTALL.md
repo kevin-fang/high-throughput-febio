@@ -12,6 +12,7 @@ ALLOW_NEGOTIATOR_SCHEDD = $(ALLOW_NEGOTIATOR)
 HOSTALLOW_CONFIG = $(CONDOR_HOST)
 CONDOR_ADMIN = <user on the central manager machine - e.g. medialab@192.168.0.101>
 NEGOTIATOR_HOST = $(CONDOR_HOST)
+DAEMON_LIST = COLLECTOR, MASTER, STARTD
 ``` 
 
 For more instructions on creating `condor_config.local`, see [setting condor_config.local](#user-content-setting-condor_configlocal).  
@@ -20,7 +21,8 @@ Once the condor configuration file is created, follow one of these two methods
 
 ### Initializing through Docker (Any OS - easier for those on macOS/Windows):  
 - Install [Docker](https://www.docker.com/) on any machine (Linux, Windows, Mac). 
-- Run `./run_docker.sh <name of config file, e.g. condor_config.local>` to add your machine to the network. For example, to run a Docker container using the sample condor config file, you would run `./run_docker.sh sample_condor_config.local`. It will take some time to initialize.
+- Add your user to the Docker group (`sudo usermod -aG docker <your username>`)
+- Run `./run_docker.sh /absolute/path/to/condor_config.local` to add your machine to the network. For example, to run a Docker container using the sample condor config file, you would run `./run_docker.sh sample_condor_config.local`. It will take some time to initialize.
 - To remove your machine from the network and stop the docker image, run `./stop_docker.sh`
 - To run on startup, add the `cd /absolute/path/to/this/directory && ./run_docker.sh <condor config file>` to `/etc/rc.local` (Linux only) on your machine. 
 
@@ -37,6 +39,7 @@ Instructions for creating a central manager are the same as adding a new machine
 - Follow either the Docker or native installation instructions.
 - If you don't want your central manager to execute jobs, add the following line to your `condor_config.local`:  
 `DAEMON_LIST = COLLECTOR, MASTER, NEGOTIATOR, SCHEDD`.
+- **IMPORTANT**: Make sure that in the `condor_config.local` of your central manager, the DAEMON_LIST has `SCHEDD` and `NEGOTIATOR` present.
 
 The central manager should be a computer with very high uptime, ideally one that is always on. When the central manager is restarted, all the execution nodes have to be restarted too. If for some reason the condor instance itself needs to be restarted on the central manager, run `condor_restart -all` on the central manager. 
 
