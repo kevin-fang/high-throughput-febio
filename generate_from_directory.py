@@ -3,9 +3,9 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 import os, stat, errno
 
 # get project name and file name of feb file
-project_name = raw_input("Set a project name: ")
-folder_name = raw_input("Location of folder containing .feb files: ")
-machine_req = raw_input("Set machine requirements? [Y/n] ").lower()
+project_name = input("Set a project name: ")
+folder_name = input("Location of folder containing .feb files: ")
+machine_req = input("Set machine requirements? [Y/n] ").lower()
 ram_req = 0
 cpu_req = 0
 if machine_req == "yes" or machine_req == "y":
