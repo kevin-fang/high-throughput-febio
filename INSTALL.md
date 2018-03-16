@@ -1,6 +1,6 @@
 # Installation and Initialization
 
-To start a HTCondor network, you need two things: 1) a central manager, and 2) execution machines. Jobs are submitted to the central manager, and the central manager distributes jobs to the execution machines. The central manager should be a computer with very high uptime.
+To start a HTCondor network, you need two things: 1) a central manager, and 2) execution machines. Jobs are submitted to the central manager, and the central manager distributes jobs to the execution machines. 
 
 ## Adding a machine to an existing network
 - First, create a `condor_config.local` file in this directory, to the following specification (take a look at [sample_condor_config.local](sample_condor_config.local) for an example):  
@@ -27,15 +27,22 @@ Once the condor configuration file is created, follow one of these two methods
 ### Native Installation (Linux only):  
 - For Ubuntu/Debian: install HTCondor with `sudo apt-get install htcondor` For other Linux distros, you may need to [build from source](https://htcondor-wiki.cs.wisc.edu/index.cgi/wiki). When installing, ignore the prompts for filesystems, etc. 
 - Move the `condor_config.local` file to `/etc/condor/condor_config.local`  
-- Start the condor instance with `sudo /etc/init.d/condor restart`
+- Start the condor instance with `sudo /etc/init.d/condor start`
 - Stop the condor instance with `sudo /etc/init.d/condor stop`
+- To restart the condor instance after changing the config file, run `sudo /etc/init.d/condor restart`
 - To run on startup, you'll want to add `sudo /etc/init.d/condor start` to the `/etc/rc.local` file.
 
 ## Creating a central manager  
-Instructions for creating a central manager are the same as adding a new machine to the network, except that the IP address that you include in the `condor_config.local` files on new machines should be the IP address of the central computer.
+Instructions for creating a central manager are the same as adding a new machine to the network. The IP address that you include in the `condor_config.local` files should be the IP address of this central computer. Once that's set up, do the following:
 - Follow either the Docker or native installation instructions.
 - If you don't want your central manager to execute jobs, add the following line to your `condor_config.local`:  
 `DAEMON_LIST = COLLECTOR, MASTER, NEGOTIATOR, SCHEDD`.
+
+The central manager should be a computer with very high uptime, ideally one that is always on. When the central manager is restarted, all the execution nodes have to be restarted too. If for some reason the condor instance itself needs to be restarted on the central manager, run `condor_restart -all` on the central manager. 
+
+If the central manager (CM) needs to be shut down or restarted, run `condor_status -master -format "%s\n" MasterIpAddr > addresses.txt` on the CM. his will save the IP addresses and the ports of all the execution nodes in a file called `addresses.txt`  
+- To restart the CM: shut down/reboot/whatever on the CM, and then run ``condor_restart `cat addresses.txt` ``
+- To shutdown the entire network, run ``condor_off `cat addresses` ``
 
 ## Verifying the installation
 

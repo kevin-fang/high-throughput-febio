@@ -1,12 +1,12 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 import os, stat
 
 # get project name and file name of feb file
-project_name = raw_input("Name of project (no spaces - i.e. cube): ")
-filename = raw_input("Name of .feb file: ")
+project_name = input("Name of project (no spaces - i.e. cube): ")
+filename = input("Name of .feb file: ")
 if ".feb" not in filename: # append the .feb extension if necessary
     filename += ".feb"
-machine_req = raw_input("Set machine requirements? [Y/n] ").lower()
+machine_req = input("Set machine requirements? [Y/n] ").lower()
 ram_req = 0
 cpu_req = 0
 if machine_req == "yes" or machine_req == "y":
