@@ -1,11 +1,11 @@
 # Installation and Initialization
 
-To start a HTCondor network, you need two things: 1) a central manager, and 2) execution machines. The central manager 
+To start a HTCondor network, you need two things: 1) a central manager, and 2) execution machines. Jobs are submitted to the central manager, and the central manager distributes jobs to the execution machines. The central manager should be a computer with very high uptime.
 
-## Adding a machine to an existing network (creating a central manager is at the end)  
+## Adding a machine to an existing network
 - First, create a `condor_config.local` file in this directory, to the following specification (take a look at [sample_condor_config.local](sample_condor_config.local) for an example):  
 ```
-CONDOR_HOST = <central manager ip address - e.g. 192.168.0.101>
+CONDOR_HOST = <central manager's ip address - e.g. 192.168.0.101>
 ALLOW_WRITE = <network of ip addresses - e.g. 192.168.0.*. Can also just be *>
 ALLOW_NEGOTIATOR = $(CONDOR_HOST)
 ALLOW_NEGOTIATOR_SCHEDD = $(ALLOW_NEGOTIATOR)
@@ -14,18 +14,28 @@ CONDOR_ADMIN = <user on the central manager machine - e.g. medialab@192.168.0.10
 NEGOTIATOR_HOST = $(CONDOR_HOST)
 ``` 
 
-For more instructions on creating `condor_config.local`, see [setting condor_config.local](#user-content-setting-condor_configlocal)
+For more instructions on creating `condor_config.local`, see [setting condor_config.local](#user-content-setting-condor_configlocal).  
 
-### Initializing through Docker (Any OS - easier):  
+Once the condor configuration file is created, follow one of these two methods
+
+### Initializing through Docker (Any OS - easier for those on macOS/Windows):  
 - Install [Docker](https://www.docker.com/) on any machine (Linux, Windows, Mac). 
 - Run `./run_docker.sh <name of config file, e.g. condor_config.local>` to add your machine to the network. For example, to run a Docker container using the sample condor config file, you would run `./run_docker.sh sample_condor_config.local`. It will take some time to initialize.
 - To remove your machine from the network and stop the docker image, run `./stop_docker.sh`
-- To automatically run condor every time your computer turns on, add the start command to `/etc/rc.local` (Linux only) on your machine.
+- To run on startup, add the `cd /absolute/path/to/this/directory && ./run_docker.sh <condor config file>` to `/etc/rc.local` (Linux only) on your machine. 
 
 ### Native Installation (Linux only):  
-- For Ubuntu/Debian: install HTCondor with `sudo apt-get install htcondor`. For other Linux distros, you may need to [build from source](https://htcondor-wiki.cs.wisc.edu/index.cgi/wiki). When installing, ignore the prompts for filesystems, etc. 
-- Move the `condor_config.local` file to `/etc/condor/condor_config.local`.
-- Start the condor instance with `sudo /etc/init.d/condor restart`. 
+- For Ubuntu/Debian: install HTCondor with `sudo apt-get install htcondor` For other Linux distros, you may need to [build from source](https://htcondor-wiki.cs.wisc.edu/index.cgi/wiki). When installing, ignore the prompts for filesystems, etc. 
+- Move the `condor_config.local` file to `/etc/condor/condor_config.local`  
+- Start the condor instance with `sudo /etc/init.d/condor restart`
+- Stop the condor instance with `sudo /etc/init.d/condor stop`
+- To run on startup, you'll want to add `sudo /etc/init.d/condor start` to the `/etc/rc.local` file.
+
+## Creating a central manager  
+Instructions for creating a central manager are the same as adding a new machine to the network, except that the IP address that you include in the `condor_config.local` files on new machines should be the IP address of the central computer.
+- Follow either the Docker or native installation instructions.
+- If you don't want your central manager to execute jobs, add the following line to your `condor_config.local`:  
+`DAEMON_LIST = COLLECTOR, MASTER, NEGOTIATOR, SCHEDD`.
 
 ## Verifying the installation
 
@@ -92,9 +102,3 @@ When defining slot types, you can also use fractions or percentages:
 SLOT_TYPE_1 = cpus=25%, ram=1/4, disk=10%
 NUM_SLOTS_TYPE_1 = 1/4
 ```
-
-
----
-### Creating a central manager  
-
-TBA
