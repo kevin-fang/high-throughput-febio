@@ -1,21 +1,9 @@
 # Installation and Initialization
 
-## Adding a machine to an existing network (creating a central manager is below this)
+To start a HTCondor network, you need two things: 1) a central manager, and 2) execution machines. The central manager 
 
-### Installing through Docker (preferred method, much easier):  
-- Install [Docker](https://www.docker.com/) on any machine (Linux, Windows, Mac). Note that running from startup is much easier on Linux machines. 
-- Run `git clone https://github.com/kevin-fang/high-throughput-febio` and navigate to the `docker_install` directory.  
-- Modify `config_maker.py` to match your specifications (see below), then run `pip install requests && python config_maker.py`. Copy the URL provided.
-- In the `Dockerfile`, modify the line `wget --output-document=condor_config.local <url>` so that it will point to the link just copied.
-	- Note the condor configuration file cannot be changed after you build the docker image. You can always rebuild the image with a corrected file, though.  
-- Build the docker image with `docker build -t condor .` After it finishes (it will take a few minutes), run `docker images` and check that there is an image called "condor" present.  
-- Run `docker run -itd --name=condor_docker condor /bin/bash && docker exec condor_docker /etc/init.d/condor start` to start the condor node.
-- To stop the node, run `docker exec condor_docker /etc/init.d/condor stop && docker kill condor_docker`
-- To automatically run condor every time your computer turns on, add the start command to `/etc/rc.local` (Linux only) on your machine.
-
-### Native Installation:  
-Install the basic package with `sudo apt-get install htcondor` Modify `/etc/condor/condor_config.local` to have the following text:
-
+## Adding a machine to an existing network (creating a central manager is at the end)  
+- First, create a `condor_config.local` file in this directory, to the following specification (take a look at [sample_condor_config.local](sample_condor_config.local) for an example):  
 ```
 CONDOR_HOST = <central manager ip address - e.g. 192.168.0.101>
 ALLOW_WRITE = <network of ip addresses - e.g. 192.168.0.*. Can also just be *>
@@ -26,7 +14,18 @@ CONDOR_ADMIN = <user on the central manager machine - e.g. medialab@192.168.0.10
 NEGOTIATOR_HOST = $(CONDOR_HOST)
 ``` 
 
-Restart the condor instance with `sudo /etc/init.d/condor restart`. 
+For more instructions on creating `condor_config.local`, see [setting condor_config.local](#user-content-setting-condor_configlocal)
+
+### Initializing through Docker (Any OS - easier):  
+- Install [Docker](https://www.docker.com/) on any machine (Linux, Windows, Mac). 
+- Run `./run_docker.sh <name of config file, e.g. condor_config.local>` to add your machine to the network. For example, to run a Docker container using the sample condor config file, you would run `./run_docker.sh sample_condor_config.local`. It will take some time to initialize.
+- To remove your machine from the network and stop the docker image, run `./stop_docker.sh`
+- To automatically run condor every time your computer turns on, add the start command to `/etc/rc.local` (Linux only) on your machine.
+
+### Native Installation (Linux only):  
+- For Ubuntu/Debian: install HTCondor with `sudo apt-get install htcondor`. For other Linux distros, you may need to [build from source](https://htcondor-wiki.cs.wisc.edu/index.cgi/wiki). When installing, ignore the prompts for filesystems, etc. 
+- Move the `condor_config.local` file to `/etc/condor/condor_config.local`.
+- Start the condor instance with `sudo /etc/init.d/condor restart`. 
 
 ## Verifying the installation
 
@@ -61,6 +60,8 @@ slot8@medialab-3Ma LINUX      X86_64 Unclaimed Idle      0.000  996  0+01:00:03
 
 To set the specs on each machine, modify `/etc/condor/condor_config.local` with the following settings (by default the machine will evenly divide its RAM among its CPUS and create a machine on HTCondor for each):
 
+If you wish to limit the resources to give to Condor, you must follow this section.
+
 Define slot types like so:  
 `SLOT_TYPE_<NUM> = cpus=<number of cpus>, ram=<amount of ram>, disk=<amount of disk space>`
 
@@ -91,6 +92,7 @@ When defining slot types, you can also use fractions or percentages:
 SLOT_TYPE_1 = cpus=25%, ram=1/4, disk=10%
 NUM_SLOTS_TYPE_1 = 1/4
 ```
+
 
 ---
 ### Creating a central manager  

@@ -14,7 +14,8 @@ ALLOW_NEGOTIATOR = $(CONDOR_HOST)
 ALLOW_NEGOTIATOR_SCHEDD = $(ALLOW_NEGOTIATOR)
 HOSTALLOW_CONFIG = $(CONDOR_HOST)
 CONDOR_ADMIN = medialab@$(CONDOR_HOST)
-DISCARD_SESSION_KEYRING_ON_STARTUP=false # this is needed in order for condor to run in a docker image
+# this is needed in order for condor to run in a docker image
+DISCARD_SESSION_KEYRING_ON_STARTUP=false 
 NEGOTIATOR_HOST = $(CONDOR_HOST)
 #SLOT_TYPE_1 = cpus=2, ram=2048
 #NUM_SLOTS_TYPE_1 = 1

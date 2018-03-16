@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-from __future__ import absolute_import, division, print_function, unicode_literals
 import os, stat
 
 # get project name and file name of feb file
@@ -23,9 +22,9 @@ output_name = project_name + ".output"
 
 FEBIO_LOCATION = '/home/medialab/febio-2.6.4/bin/febio2.lnx64'
 
-# write the script to a file
+# write the FEBio script to a file
 with open(script_name, "w") as script_file:
-    script_file.write("#!/bin/bash\n" + FEBIO_LOCATION + " -i " + filename + '\n')
+    script_file.write("#!/bin/bash\n" + FEBIO_LOCATION + " -i $1\n")
 # make the script executable
 st = os.stat(script_name)
 os.chmod(script_name, st.st_mode | stat.S_IEXEC | stat.S_IXGRP | stat.S_IXOTH)
