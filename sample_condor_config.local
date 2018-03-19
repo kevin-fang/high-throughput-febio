@@ -9,14 +9,17 @@
 # both the main configuration file and this local configuration. Note that
 # DebConf-generated configuration will overwrite settings in this file.
 CONDOR_HOST = 192.168.0.101
-ALLOW_WRITE = 192.168.0.*
+ALLOW_WRITE = *
 ALLOW_NEGOTIATOR = $(CONDOR_HOST)
 ALLOW_NEGOTIATOR_SCHEDD = $(ALLOW_NEGOTIATOR)
 HOSTALLOW_CONFIG = $(CONDOR_HOST)
 CONDOR_ADMIN = medialab@$(CONDOR_HOST)
 # this is needed in order for condor to run in a docker image
-DISCARD_SESSION_KEYRING_ON_STARTUP=false 
+DISCARD_SESSION_KEYRING_ON_STARTUP=false
 NEGOTIATOR_HOST = $(CONDOR_HOST)
-SLOT_TYPE_1 = cpus=2, ram=4096
-NUM_SLOTS_TYPE_1 = 1
+SLOT_TYPE_1 = cpus=1/2, ram=1/2
+NUM_SLOTS_TYPE_1 = 2
 DAEMON_LIST = COLLECTOR, MASTER, STARTD
+START=true
+HIGHPORT=3500
+LOWPORT=3000
