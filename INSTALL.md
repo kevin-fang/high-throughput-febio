@@ -22,7 +22,7 @@ For more instructions on creating `condor_config.local`, see [setting condor_con
 
 Once the condor configuration file is created, follow one of these two methods:
 
-### Initializing through Docker (Linux/maybe Windows; no MacOS):  
+### Initializing through Docker (Tested on Linux; might work on Windows. Doesn't work on Mac):  
 - Install [Docker](https://www.docker.com/) on your machine. 
 - Add your user to the Docker group (`sudo usermod -aG docker <your username>`)
 - Run `./run_docker.sh /absolute/path/to/this/directory/condor_config.local` to add your machine to the network. For example, to run a Docker container using the sample condor config file, you would run `./run_docker.sh /path/to/high-throughput-febio/sample_condor_config.local`. It will take some time to download the Docker image and initialize.

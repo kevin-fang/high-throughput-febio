@@ -1,19 +1,18 @@
-# Finite Element Analysis with High Throughput Computing   
-
+# Finite Element Analysis with High Throughput Computing  
 Kevin Fang, Biomechatronics @ MIT Media Lab, March 2018
 
-Set up a cluster of computers for high throughput computing to run computational analysis. This specific repository applies to using FEBio, software for finite element analysis. However, this idea can be applied to any project that has lots of files that need to be processed.
+Distribute finite element analysis jobs to a cluster of computers running Linux using HTCondor. This specific repository applies to using FEBio. However, this idea can be applied to any project that has lots of files that need to be processed.
 
 ---
 
 ## About
 
-This repository uses [HTCondor](https://research.cs.wisc.edu/htcondor/), high throughput compute software created by UW-Madison. The goal of this project is to create a network that distributes many complex software jobs (e.g. thousands of optimization problems) to lots of computers. Running a single very intense workload (e.g. a single 15 hour calculation) would be better suited for other networks. 
+This repository uses [HTCondor](https://research.cs.wisc.edu/htcondor/), high throughput compute software created by UW-Madison. The goal of this project is to create a network that distributes many complex software jobs (e.g. thousands of optimization problems) to lots of computers. This network does not do well with running a single, very intense workload (e.g. one 15 hour calculation).  
 
 ---
 
 ### Installation  
-[INSTALL.md](INSTALL.md) contains important installation instructions on how to set up the Condor network
+[INSTALL.md](INSTALL.md) contains important installation instructions on how to set up the Condor network. 
 
 --- 
 
@@ -23,12 +22,11 @@ This repository uses [HTCondor](https://research.cs.wisc.edu/htcondor/), high th
 
 `generate_condor_job.py` creates a job for a single submission. 
 
-Both of these scripts create a `.sub` file for to be submitted, and a file called `febio.sh` that contains the command for each execution machine to run. 
-
+Both of these scripts create a `.sub` file for to be submitted, and a file called `febio.sh` that contains the command for each execution machine to run.  
 
 ---
 
-## How to use
+## Using HTCondor for FEBio
 
 Once you follow the [installation instructions](INSTALL.md), you can submit jobs through the central manager. Technically, any machine can submit jobs for the central manager to process.
 
@@ -76,5 +74,12 @@ project_directory/
     └───model3.feb
 ```
 
+## Expanding beyond FEBio  
+This repo can easily be modified to work with other command line processing software besides FEBio, but it involves knowing Docker, Python, and Condor, and requires a basic understanding of `generate_from_directory.py`. To use it with other software:  
+- Change the Dockerfile such that it installs the needed software in the image (e.g. if you're running MatLab, modify the Dockerfile so that it installs MatLab).  
+- Modify `generate_from_directory.py` so that `script_file` contains a command line argument to run the command line software. To feed in parameters, use `$1`.  
+- Modify the `generate_job` function in `generate_from_directory.py` so that it has the correct input/output names and redirects output correcty.
+
 ### To do:  
 - Make a user friendly method of submitting jobs - perhaps a web server with Node.js/React.js?
+- Create documentation for submitting jobs from other machines if the central manager is not easily accessible.
