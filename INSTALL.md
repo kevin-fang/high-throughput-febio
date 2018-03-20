@@ -2,8 +2,9 @@
 
 To start a HTCondor network, you need two things: 1) a central manager, and 2) execution machines. Jobs are submitted to the central manager, and the central manager distributes jobs to the execution machines. 
 
-## Adding a machine to an existing network
-- First, create a `condor_config.local` file in this directory, to the following specification (take a look at [sample_condor_config.local](sample_condor_config.local) for an example):  
+## Working with HTCondor.
+- Clone this repository with `git clone https://github.com/kevin-fang/high-throughput-febio`
+- Create a `condor_config.local` file in the repo's directory, to the following specification (take a look at [sample_condor_config.local](sample_condor_config.local) for an example):  
 ```
 CONDOR_HOST = <central manager's ip address - e.g. 192.168.0.101>
 ALLOW_WRITE = <network of ip addresses - e.g. 192.168.0.*. Can also just be *>
@@ -13,21 +14,23 @@ HOSTALLOW_CONFIG = $(CONDOR_HOST)
 CONDOR_ADMIN = <user on the central manager machine - e.g. medialab@192.168.0.101>
 NEGOTIATOR_HOST = $(CONDOR_HOST)
 DAEMON_LIST = COLLECTOR, MASTER, STARTD
-``` 
+```
+
+Note that you only need to change `CONDOR_HOST` and `CONDOR_ADMIN`, most of the time. For more security, `ALLOW_WRITE` can be changed to be more specific.
 
 For more instructions on creating `condor_config.local`, see [setting condor_config.local](#user-content-setting-condor_configlocal).  
 
-Once the condor configuration file is created, follow one of these two methods
+Once the condor configuration file is created, follow one of these two methods:
 
-### Initializing through Docker (Any OS - easier for those on macOS/Windows):  
-- Install [Docker](https://www.docker.com/) on any machine (Linux, Windows, Mac). 
+### Initializing through Docker (Linux/maybe Windows; no MacOS):  
+- Install [Docker](https://www.docker.com/) on your machine. 
 - Add your user to the Docker group (`sudo usermod -aG docker <your username>`)
-- Run `./run_docker.sh /absolute/path/to/condor_config.local` to add your machine to the network. For example, to run a Docker container using the sample condor config file, you would run `./run_docker.sh sample_condor_config.local`. It will take some time to initialize.
+- Run `./run_docker.sh /absolute/path/to/this/directory/condor_config.local` to add your machine to the network. For example, to run a Docker container using the sample condor config file, you would run `./run_docker.sh /path/to/high-throughput-febio/sample_condor_config.local`. It will take some time to download the Docker image and initialize.
 - To remove your machine from the network and stop the docker image, run `./stop_docker.sh`
-- To run on startup, add the `cd /absolute/path/to/this/directory && ./run_docker.sh <condor config file>` to `/etc/rc.local` (Linux only) on your machine. 
+- To run on startup, add `cd /absolute/path/to/this/directory && ./run_docker.sh <condor config file>` to `/etc/rc.local` (Linux only) on your machine. 
 
 ### Native Installation (Linux only):  
-- For Ubuntu/Debian: install HTCondor with `sudo apt-get install htcondor` For other Linux distros, you may need to [build from source](https://htcondor-wiki.cs.wisc.edu/index.cgi/wiki). When installing, ignore the prompts for filesystems, etc. 
+- For Ubuntu/Debian: install HTCondor with `export DEBIAN_FRONTEND=noninteractive && sudo apt-get install htcondor && unset DEBIAN_FRONTEND` For other Linux distros, you may need to [build from source](https://htcondor-wiki.cs.wisc.edu/index.cgi/wiki). When installing, ignore the prompts for filesystems, etc. 
 - Move the `condor_config.local` file to `/etc/condor/condor_config.local`  
 - Start the condor instance with `sudo /etc/init.d/condor start`
 - Stop the condor instance with `sudo /etc/init.d/condor stop`
@@ -35,8 +38,8 @@ Once the condor configuration file is created, follow one of these two methods
 - To run on startup, you'll want to add `sudo /etc/init.d/condor start` to the `/etc/rc.local` file.
 
 ## Creating a central manager  
-Instructions for creating a central manager are the same as adding a new machine to the network. The IP address that you include in the `condor_config.local` files should be the IP address of this central computer. Once that's set up, do the following:
-- Follow either the Docker or native installation instructions.
+Instructions for creating a central manager are the same as adding a new machine to the network. The IP address that you include in the `condor_config.local` files should be the IP address of this computer. Once that's set up, do the following:
+- Follow either the Docker or native installation instructions. 
 - If you don't want your central manager to execute jobs, add the following line to your `condor_config.local`:  
 `DAEMON_LIST = COLLECTOR, MASTER, NEGOTIATOR, SCHEDD`.
 - **IMPORTANT**: Make sure that in the `condor_config.local` of your central manager, the DAEMON_LIST has `SCHEDD` and `NEGOTIATOR` present.
