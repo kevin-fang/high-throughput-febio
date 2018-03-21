@@ -30,7 +30,7 @@ Once the condor configuration file is created, follow one of these two methods:
 - To run on startup, add `cd /absolute/path/to/this/directory && ./run_docker.sh <condor config file>` to `/etc/rc.local` (Linux only) on your machine. 
 
 ### Native Installation (Linux only):  
-- For Ubuntu/Debian: install HTCondor with `sudo apt-get install htcondor` For other Linux distros, you may need to [build from source](https://htcondor-wiki.cs.wisc.edu/index.cgi/wiki). When installing, select "no" when "Manage installation of HTCondor automatically" appears. 
+- For Ubuntu/Debian: install HTCondor with `sudo apt-get install htcondor` For other Linux distros, you may need to [build from source](https://htcondor-wiki.cs.wisc.edu/index.cgi/wiki). When installing, **select "no"** when "Manage installation of HTCondor automatically" appears. 
 - Move the `condor_config.local` file to `/etc/condor/condor_config.local`  
 - Start the condor instance with `sudo /etc/init.d/condor start`
 - Stop the condor instance with `sudo /etc/init.d/condor stop`

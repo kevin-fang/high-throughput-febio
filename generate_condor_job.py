@@ -2,6 +2,7 @@
 import os, stat
 
 # get project name and file name of feb file
+print("DEPRECATED - PLEASE USE generate_from_directory.py")
 project_name = input("Name of project (no spaces - i.e. cube): ")
 filename = input("Name of .feb file: ")
 if ".feb" not in filename: # append the .feb extension if necessary
