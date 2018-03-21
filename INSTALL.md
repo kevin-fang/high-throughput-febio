@@ -55,7 +55,7 @@ If your central manager isn't your personal computer,  you probably want to be a
 - Create the `condor_config.local` file to the specification aboveand move it to `/etc/condor/condor_config.local`. This time, however, change the `DAEMON_LIST` variable to `DAEMON_LIST = COLLECTOR, MASTER, SCHEDD`
 - Follow the *native* installation directions for Condor. Move the `condor_config.local` file to `/etc/condor/condor_config.local` and then run `/etc/init.d/condor restart`
 - Submit jobs with `condor_submit <file>.sub`
-- If you want to submit jobs through a Docker installation, the process becomes a little more convoluted, as it involves mounting volumes. Please look at the [Docker volume documentation](https://docs.docker.com/storage/volumes/#start-a-container-with-a-volume) for more instructions. You'll basically want to mount the project folder to somewhere in the Docker image, and then use `docker exec condor_docker condor_submit <volume>` after starting the image with `run_docker.sh`
+- If you want to submit jobs through a Docker installation, the process becomes a little more convoluted, as it involves mounting volumes. Please look at the [Docker volume documentation](https://docs.docker.com/storage/volumes/#start-a-container-with-a-volume) for more instructions. You'll basically want to mount the project folder to somewhere in the Docker image by modifying the `run_docker.sh` script to mount an entire directory rather than a `condor_config.local` file.Then, use `docker exec condor_docker condor_submit <volume>` to submit jobs after starting the image with `run_docker.sh`
 
 ## Verifying the installation
 
