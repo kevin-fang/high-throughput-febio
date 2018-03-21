@@ -30,7 +30,7 @@ Once the condor configuration file is created, follow one of these two methods:
 - To run on startup, add `cd /absolute/path/to/this/directory && ./run_docker.sh <condor config file>` to `/etc/rc.local` (Linux only) on your machine. 
 
 ### Native Installation (Linux only):  
-- For Ubuntu/Debian: install HTCondor with `export DEBIAN_FRONTEND=noninteractive && sudo apt-get install htcondor && unset DEBIAN_FRONTEND` For other Linux distros, you may need to [build from source](https://htcondor-wiki.cs.wisc.edu/index.cgi/wiki). When installing, ignore the prompts for filesystems, etc. 
+- For Ubuntu/Debian: install HTCondor with `sudo apt-get install htcondor` For other Linux distros, you may need to [build from source](https://htcondor-wiki.cs.wisc.edu/index.cgi/wiki). When installing, select "no" when "Manage installation of HTCondor automatically" appears. 
 - Move the `condor_config.local` file to `/etc/condor/condor_config.local`  
 - Start the condor instance with `sudo /etc/init.d/condor start`
 - Stop the condor instance with `sudo /etc/init.d/condor stop`
@@ -49,6 +49,13 @@ The central manager should be a computer with very high uptime, ideally one that
 If the central manager (CM) needs to be shut down or restarted, run `condor_status -master -format "%s\n" MasterIpAddr > addresses.txt` on the CM. his will save the IP addresses and the ports of all the execution nodes in a file called `addresses.txt`  
 - To restart the CM: shut down/reboot/whatever on the CM, and then run ``condor_restart `cat addresses.txt` ``
 - To shutdown the entire network, run ``condor_off `cat addresses` ``
+
+## Adding a machine just to submit jobs  
+If your central manager isn't your personal computer,  you probably want to be able to submit jobs without transferring files. Luckily, the process for creating a machine *just* for job submission is very simple. On the machine:  
+- Create the `condor_config.local` file to the specification aboveand move it to `/etc/condor/condor_config.local`. This time, however, change the `DAEMON_LIST` variable to `DAEMON_LIST = COLLECTOR, MASTER, SCHEDD`
+- Follow the *native* installation directions for Condor. Move the `condor_config.local` file to `/etc/condor/condor_config.local` and then run `/etc/init.d/condor restart`
+- Submit jobs with `condor_submit <file>.sub`
+- If you want to submit jobs through a Docker installation, the process becomes a little more convoluted, as it involves mounting volumes. Please look at the [Docker volume documentation](https://docs.docker.com/storage/volumes/#start-a-container-with-a-volume) for more instructions. You'll basically want to mount the project folder to somewhere in the Docker image, and then use `docker exec condor_docker condor_submit <volume>` after starting the image with `run_docker.sh`
 
 ## Verifying the installation
 
