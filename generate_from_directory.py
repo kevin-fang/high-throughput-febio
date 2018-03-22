@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import os, stat, errno, sys
 
+# parse arguments for job submission creator
 import argparse
 parser = argparse.ArgumentParser(description='Create a job submission file for HTCondor')
 parser.add_argument("--project_name", default="job", help="Set a file name for the job submission file (default: \"job\")")
@@ -9,10 +10,7 @@ parser.add_argument("--cpu_req", type=int, default=0, help="Number of CPU cores 
 parser.add_argument("--ram_req", type=int, default=0, help="MB of RAM required for each job (default: 0)")
 args = parser.parse_args()
 
-folder_name = args.folder
-project_name = args.project_name
-cpu_req = args.cpu_req
-ram_req = args.ram_req
+folder_name, project_name, cpu_req, ram_req = args.folder, args.project_name, args.cpu_req, args.ram_req
 
 # location where FEBio is located
 FEBIO_LOCATION = '/home/medialab/febio-2.6.4/bin/febio2.lnx64'
