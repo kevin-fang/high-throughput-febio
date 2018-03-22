@@ -39,12 +39,10 @@ def generate_job(filename, input_dir):
     # remove the .feb extension
     truncated_filename = filename[0:-4]
     return """arguments = {filename}
-transfer_input_files = {input_dir}/{filename}
-output = output/{truncated_filename}.out
-error = output/{truncated_filename}.err
-transfer_output_files = {truncated_filename}.xplt, {truncated_filename}.log
-log = output/{truncated_filename}.log
-transfer_output_remaps = \"{truncated_filename}.xplt=./output/{truncated_filename}.xplt; {truncated_filename}.log=./output/{truncated_filename}.log\"
+transfer_input_files = ../{input_dir}/{filename}
+output = {truncated_filename}.out
+error = {truncated_filename}.err
+log = {truncated_filename}.log
 queue
 
 """.format(filename = filename, truncated_filename = truncated_filename, input_dir = input_dir)
@@ -55,7 +53,7 @@ job_name = project_name + ".sub"
 with open(job_name, "w") as job_file:
     job_file.write(
 """ #initialize
-executable = febio.sh
+executable = ../febio.sh
 universe = Vanilla
 should_transfer_files = Yes
 request_memory = {}
