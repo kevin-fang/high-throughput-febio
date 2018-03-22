@@ -1,25 +1,29 @@
-# HTCondor configuration file
-#
-# Configuration placed into this file extends/overwrites the settings in the
-# main HTCondor configuration at /etc/condor/condor_config.
-# It may be advantagous to leave the main configuration file pristine and put
-# local configuration here to ease configuration updates during upgrades of the
-# HTCondor Debian package. Alternatively, it is also possible to place additional
-# configuration files into /etc/condor/config.d that will take precedence over
-# both the main configuration file and this local configuration. Note that
-# DebConf-generated configuration will overwrite settings in this file.
+# the IP address of the central manager - change this line if needed
 CONDOR_HOST = 192.168.0.101
-ALLOW_WRITE = *
+
+# define slot types - change this line if needed
+SLOT_TYPE_1 = cpus=1/2, ram=1/2
+NUM_SLOTS_TYPE_1 = 2
+
+ALLOW_WRITE = $(CONDOR_HOST)
 ALLOW_NEGOTIATOR = $(CONDOR_HOST)
-ALLOW_NEGOTIATOR_SCHEDD = $(ALLOW_NEGOTIATOR)
+ALLOW_NEGOTIATOR_SCHEDD = $(CONDOR_HOST)
 HOSTALLOW_CONFIG = $(CONDOR_HOST)
 CONDOR_ADMIN = medialab@$(CONDOR_HOST)
+
 # this is needed in order for condor to run in a docker image
 DISCARD_SESSION_KEYRING_ON_STARTUP=false
 NEGOTIATOR_HOST = $(CONDOR_HOST)
-SLOT_TYPE_1 = cpus=1/2, ram=1/2
-NUM_SLOTS_TYPE_1 = 2
-DAEMON_LIST = COLLECTOR, MASTER, STARTD
+
+# Types of Daemon configurations
+# Submit only: MASTER, SCHEDD
+# Execute only: MASTER, STARTD
+# Central Manager: MASTER, COLLECTOR, SCHEDD, NEGOTIATOR
+DAEMON_LIST = MASTER, STARTD
+
 START=true
+# choose specific ports to fill with Condor - for Docker
 HIGHPORT=3500
 LOWPORT=3000
+# prevent the history file from getting too big
+HISTORY=

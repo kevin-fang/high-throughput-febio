@@ -4,17 +4,7 @@ To start a HTCondor network, you need two things: 1) a central manager, and 2) e
 
 ## Working with HTCondor.
 - Clone this repository with `git clone https://github.com/kevin-fang/high-throughput-febio`
-- Create a `condor_config.local` file in the repo's directory, to the following specification (take a look at [sample_condor_config.local](sample_condor_config.local) for an example):  
-```
-CONDOR_HOST = <central manager's ip address - e.g. 192.168.0.101>
-ALLOW_WRITE = <network of ip addresses - e.g. 192.168.0.*. Can also just be *>
-ALLOW_NEGOTIATOR = $(CONDOR_HOST)
-ALLOW_NEGOTIATOR_SCHEDD = $(ALLOW_NEGOTIATOR)
-HOSTALLOW_CONFIG = $(CONDOR_HOST)
-CONDOR_ADMIN = <user on the central manager machine - e.g. medialab@192.168.0.101>
-NEGOTIATOR_HOST = $(CONDOR_HOST)
-DAEMON_LIST = COLLECTOR, MASTER, STARTD
-```
+- Create a `condor_config.local` file in the repo's directory. Take a look at [sample_condor_config.local](sample_condor_config.local) for an example. In `condor_config.local`, you only need to change CONDOR_HOST, the slot types, and maybe the DAEMON_LIST
 
 Note that you only need to change `CONDOR_HOST` and `CONDOR_ADMIN`, most of the time. For more security, `ALLOW_WRITE` can be changed to be more specific.
 
@@ -52,7 +42,7 @@ If the central manager (CM) needs to be shut down or restarted, run `condor_stat
 
 ## Adding a machine just to submit jobs  
 If your central manager isn't your personal computer,  you probably want to be able to submit jobs without transferring files. Luckily, the process for creating a machine *just* for job submission is very simple. On the machine:  
-- Create the `condor_config.local` file to the specification aboveand move it to `/etc/condor/condor_config.local`. This time, however, change the `DAEMON_LIST` variable to `DAEMON_LIST = COLLECTOR, MASTER, SCHEDD`
+- Create the `condor_config.local` file to the specification aboveand move it to `/etc/condor/condor_config.local`. This time, however, change the `DAEMON_LIST` variable to `DAEMON_LIST = MASTER, SCHEDD`
 - Follow the *native* installation directions for Condor. Move the `condor_config.local` file to `/etc/condor/condor_config.local` and then run `/etc/init.d/condor restart`
 - Submit jobs with `condor_submit <file>.sub`
 - If you want to submit jobs through a Docker installation, the process becomes a little more convoluted, as it involves mounting volumes. Please look at the [Docker volume documentation](https://docs.docker.com/storage/volumes/#start-a-container-with-a-volume) for more instructions. You'll basically want to mount the project folder to somewhere in the Docker image by modifying the `run_docker.sh` script to mount an entire directory rather than a `condor_config.local` file.Then, use `docker exec condor_docker condor_submit <volume>` to submit jobs after starting the image with `run_docker.sh`
