@@ -8,9 +8,13 @@ parser.add_argument("--project_name", default="job", help="Set a file name for t
 parser.add_argument("--folder", required=True, help="Folder containing .feb files")
 parser.add_argument("--cpu_req", type=int, default=0, help="Number of CPU cores required for each job (default: 0)")
 parser.add_argument("--ram_req", type=int, default=0, help="MB of RAM required for each job (default: 0)")
+parser.add_argument("--run", default=False, nargs="?", help="Run immediately after generation")
 args = parser.parse_args()
 
-folder_name, project_name, cpu_req, ram_req = args.folder, args.project_name, args.cpu_req, args.ram_req
+folder_name, project_name, cpu_req, ram_req, run = args.folder, args.project_name, args.cpu_req, args.ram_req, args.run
+
+if run == None:
+    run = True
 
 # location where FEBio is located
 FEBIO_LOCATION = '/home/medialab/febio-2.6.4/bin/febio2.lnx64'
@@ -31,8 +35,8 @@ with open(folder_name + '/output/' + script_name, "w") as script_file:
     script_file.write("#!/bin/bash\n" + FEBIO_LOCATION + " -i $1\n")
     
 # make the script executable
-st = os.stat(script_name)
-os.chmod(script_name, st.st_mode | stat.S_IEXEC | stat.S_IXGRP | stat.S_IXOTH)
+st = os.stat(folder_name + '/output/' + script_name)
+os.chmod(folder_name + '/output/' + script_name, st.st_mode | stat.S_IEXEC | stat.S_IXGRP | stat.S_IXOTH)
 
 # generate a job from a filenmae
 def generate_job(filename, input_dir):
@@ -68,4 +72,9 @@ request_cpus = {}
         else:
             print("Skipping " + filename + " (doesn't end in .feb) ")
 
-print("\nSuccessfully generated job. Run `cd output && condor_submit {}` to start the job.".format(project_name + ".sub"))
+command = "cd {} && condor_submit {}".format(folder_name + '/output/', project_name + '.sub')
+print("\nSuccessfully generated job. Run `{}` to start the job.".format(command))
+
+if run:
+    from os import system
+    system(command)
