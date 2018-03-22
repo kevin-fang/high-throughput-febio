@@ -14,11 +14,11 @@ folder_name, project_name, cpu_req, ram_req = args.folder, args.project_name, ar
 
 # location where FEBio is located
 FEBIO_LOCATION = '/home/medialab/febio-2.6.4/bin/febio2.lnx64'
-script_name = "./febio.sh"
+script_name = "febio.sh"
 
 # make sure that an output directory is generated, because HTCondor does not automatically do it
 try:
-    os.makedirs('./output')
+    os.makedirs(folder_name + '/output')
     print("Creating output folder...")
 except OSError as e:
     if e.errno == errno.EEXIST:
@@ -27,7 +27,7 @@ except OSError as e:
         raise
 
 # write the FEBio script
-with open(script_name, "w") as script_file:
+with open(folder_name + '/output/' + script_name, "w") as script_file:
     script_file.write("#!/bin/bash\n" + FEBIO_LOCATION + " -i $1\n")
     
 # make the script executable
@@ -39,7 +39,7 @@ def generate_job(filename, input_dir):
     # remove the .feb extension
     truncated_filename = filename[0:-4]
     return """arguments = {filename}
-transfer_input_files = ../{input_dir}/{filename}
+transfer_input_files = ../{filename}
 output = {truncated_filename}.out
 error = {truncated_filename}.err
 log = {truncated_filename}.log
@@ -48,13 +48,13 @@ queue
 """.format(filename = filename, truncated_filename = truncated_filename, input_dir = input_dir)
 
 
-job_name = "./output/" + project_name + ".sub"
+job_name = folder_name + "/output/" + project_name + ".sub"
 
 # generate the condor job
 with open(job_name, "w") as job_file:
     job_file.write(
-""" #initialize
-executable = ../febio.sh
+"""#initialize
+executable = ./febio.sh
 universe = Vanilla
 should_transfer_files = Yes
 request_memory = {}
