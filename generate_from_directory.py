@@ -14,7 +14,7 @@ folder_name, project_name, cpu_req, ram_req = args.folder, args.project_name, ar
 
 # location where FEBio is located
 FEBIO_LOCATION = '/home/medialab/febio-2.6.4/bin/febio2.lnx64'
-script_name = "febio.sh"
+script_name = "./febio.sh"
 
 # make sure that an output directory is generated, because HTCondor does not automatically do it
 try:
@@ -47,7 +47,8 @@ queue
 
 """.format(filename = filename, truncated_filename = truncated_filename, input_dir = input_dir)
 
-job_name = project_name + ".sub"
+
+job_name = "./output/" + project_name + ".sub"
 
 # generate the condor job
 with open(job_name, "w") as job_file:
@@ -67,4 +68,4 @@ request_cpus = {}
         else:
             print("Skipping " + filename + " (doesn't end in .feb) ")
 
-print("\nSuccessfully generated job. Run condor_submit {} to start the job.".format(job_name))
+print("\nSuccessfully generated job. Run `cd output && condor_submit {}` to start the job.".format(project_name + ".sub"))
