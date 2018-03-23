@@ -13,6 +13,9 @@ args = parser.parse_args()
 
 folder_name, project_name, cpu_req, ram_req, run = args.folder, args.project_name, args.cpu_req, args.ram_req, args.run
 
+if ".sub" in project_name:
+    project_name = project_name[0:-4]
+
 if run == None:
     run = True
 
@@ -32,7 +35,7 @@ except OSError as e:
 
 # write the FEBio script
 with open(folder_name + '/output/' + script_name, "w") as script_file:
-    script_file.write("#!/bin/bash\n" + FEBIO_LOCATION + " -i $1\n")
+    script_file.write("#!/bin/bash\n" + FEBIO_LOCATION + " -i $1 -o ${1%.*}.txt\n")
     
 # make the script executable
 st = os.stat(folder_name + '/output/' + script_name)

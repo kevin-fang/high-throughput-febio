@@ -12,66 +12,56 @@ This repository uses [HTCondor](https://research.cs.wisc.edu/htcondor/), high th
 ---
 
 ### Installation  
-[INSTALL.md](INSTALL.md) contains important installation instructions on how to set up the Condor network. 
+[INSTALL.md](INSTALL.md) contains important installation instructions on how to set up the Condor network.  
+Complete list of steps to follow from INSTALL.md:  
+1. Set up a central manager (either using the [Docker](INSTALL.md#user-content-initializing-through-docker)) or [native](INSTALL.md#user-content-native-installation) method). In `condor_config.local`, set `DAEMON_LIST` to `MASTER, COLLECTOR, NEGOTIATOR, SCHEDD` and optionally addd `STARTD` if you want your central manager to be able to execute jobs to. Record the IP address of this computer.
+2. Set up execution machines (either Docker/native). Set [slot definitions](user-content-setting-condor_configlocal). In `condor_config.local`, set CONDOR_HOST equal to the IP address of the central manager. If you are deploying to a large configuration, it would be easiest to distribute the same configuration file to all the machines.
+3. Once the native/Docker installations are all up, run `condor_status` on the central manager and make sure that you see all the machines.  
+4. Follow the Python script instructions below for creating jojbs.
+
 
 --- 
 
-### Python scripts
+### Using the Python scripts with Condor
 
-`generate_from_directory.py` takes a job name and directory as input. It generates a single submission file that creates a job to run FEBio on every single file in the provided directory.
+`generate_from_directory.py` generates a single submission file that creates a job to run analysis on several .feb files in a directory. It takes the following arguments:  
+- `--folder` (required) points to the directory containing the .feb files (e.g. `--folder ./files`).
+- `--project_name` (optional) sets a project name for the output job file. Default is `job.sub`.
+- `--ram_req` (optional) sets a RAM requirement in megabytes for computers able to execute the job.
+- `--cpu_req` (optional) sets a CPU requirement in number of cores for computers able to execute the job.
+- `--run` - if this is included, immediately after generating the job submission file the program will submit the job to the cluster.
 
-`generate_condor_job.py` creates a job for a single submission. 
+The generated files will be located in a directory called `output/`.
 
-Both of these scripts create a `.sub` file for to be submitted, and a file called `febio.sh` that contains the command for each execution machine to run.  
+The script creates a `.sub` file to be submitted, and a file called `febio.sh` that contains the command for the execution machines to run.  
 
----
-
-## Using HTCondor for FEBio
-
-Once you follow the [installation instructions](INSTALL.md), you can submit jobs through the central manager. Technically, any machine can submit jobs for the central manager to process.
-
-Create a new directory for your project (let's call it `project_directory/`). In `project_directory/`, create a folder to hold the FEBio files (call it `files/`) and copy all the `.feb` files to that directory. Copy the Python script `generate_from_directory.py` in this repository to `project_directory/`. Run `python3 generate_from_directory.py` and follow the instructions to generate a job submission (we'll call this project "sample_job").
-
-Once the Python script is run, the `project_directory/` should look like this:  
+For example, if you have .feb files located in a directory called `feb_directory/`, run `python3 generate_from_directory.py --folder feb_directory --job sample_job` and follow the instructions to generate a job submission. Once the script is run, `feb_directory/` should look like this:  
 ```
-project_directory/
-├───generate_from_directory.py
-├───febio.sh
-├───sample_job.sub
-├───output
-│   └───[empty]
-└───files
-    ├───model1.feb
-    ├───model2.feb
-    └───model3.feb
+feb_directory/
+├───model1.feb
+├───model2.feb
+├───model3.feb
+└───output/
+   ├───sample_job.sub
+   └───febio.sh
+
 ```
 
-- On the central manager, check that the Condor cluster is active with `condor_status`. If it prints a list of machines, that means that your setup was successful.  
-- Run `condor_submit <submission file>.sub` and wait for the cluster to run the analysis (the output of `condor_submit` should be `<num_jobs> job(s) submitted to cluster <cluster_num>`).  
+- If you want to submit the job immediately, you would run `python3 generate_from_directory.py --folder feb_directory --job sample_job --run` instead.  
+- If you did not include `--run`, navigate to `output/` and run `condor_submit <submission file>.sub` and wait for the cluster to run the analysis (the output of `condor_submit` should be `<num_jobs> job(s) submitted to cluster <cluster_num>`).  
 - Check on the status of the jobs with `condor_q`, or for more detailed analysis, write `condor_q -analyze <cluster_num>`. The output of the jobs can be found in a new directory called `output/`.
 - After the analysis is finished, `project_directory/` would look like this:  
 ```
-project_directory/
-├───generate_from_directory.py
-├───febio.sh
-├───sample_job.sub
-├───output
-│   ├───model1.err
-│   ├───model1.log
-│   ├───model1.out
-│   ├───model1.xplt
-│   ├───model2.err
-│   ├───model2.log
-│   ├───model2.out
-│   ├───model2.xplt
-│   ├───model3.err
-│   ├───model3.log
-│   ├───model3.out
-│   └───model3.xplt
-└───files
-    ├───model1.feb
-    ├───model2.feb
-    └───model3.feb
+feb_directory/
+├───model1.feb
+├───model2.feb
+├───model3.feb
+└───output/
+   ├───sample_job.sub
+   ├───model1.txt, model1.log, model1.err + model1 outputs
+   ├───model2.txt, model2.log, model2.err + model2 outputs
+   ├───model3.txt, model3.log, model3.err + model3 outputs
+   └───febio.sh
 ```
 
 ## Expanding beyond FEBio  
