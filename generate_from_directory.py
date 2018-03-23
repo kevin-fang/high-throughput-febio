@@ -76,8 +76,10 @@ request_cpus = {}
             print("Skipping " + filename + " (doesn't end in .feb) ")
 
 command = "cd {} && condor_submit {}".format(folder_name + '/output/', project_name + '.sub')
-print("\nSuccessfully generated job. Run `{}` to start the job.".format(command))
 
 if run:
     from os import system
+    print("Submitting job...")
     system(command)
+else:
+    print("\nSuccessfully generated job. Run `{}` to start the job.".format(command))
