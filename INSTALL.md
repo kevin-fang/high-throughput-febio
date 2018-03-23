@@ -2,11 +2,10 @@
 
 To start a HTCondor network, you need two things: 1) a central manager, and 2) execution machines. Jobs are submitted to the central manager, and the central manager distributes jobs to the execution machines. 
 
-## Working with HTCondor.
 - Clone this repository with `git clone https://github.com/kevin-fang/high-throughput-febio`
-- Create a `condor_config.local` file in the repo's directory. Take a look at [sample_condor_config.local](sample_condor_config.local) for an example. In `condor_config.local`, you only need to change CONDOR_HOST, the slot types, and maybe the DAEMON_LIST
+- Create a `condor_config.local` file in the repo's directory. Take a look at [sample_condor_config.local](sample_condor_config.local) for an example. In `condor_config.local`, you only need to change CONDOR_HOST to the IP address of the central manager.
 
-Note that you only need to change `CONDOR_HOST` and `CONDOR_ADMIN`, most of the time. For more security, `ALLOW_WRITE` can be changed to be more specific.
+For more customization, you might want to change the slot types and DAEMON_LIST.
 
 For more instructions on creating `condor_config.local`, see [setting condor_config.local](#user-content-setting-condor_configlocal).  
 
@@ -16,7 +15,8 @@ Once the condor configuration file is created, follow one of these two methods:
 (Tested on Linux; might work on Windows. Doesn't work on Mac.)  
 - Install [Docker](https://www.docker.com/) on your machine. 
 - Add your user to the Docker group (`sudo usermod -aG docker <your username>`)
-- Run `./run_docker.sh /absolute/path/to/this/directory/condor_config.local` to add your machine to the network. For example, to run a Docker container using the sample condor config file, you would run `./run_docker.sh /path/to/high-throughput-febio/sample_condor_config.local`. It will take some time to download the Docker image and initialize.
+- Create a `condor_config.local` file.
+- Run `./run_docker.sh /absolute/path/to/condor_config.local` to add your machine to the network. For example, to run a Docker container using the sample condor config file, you would run `./run_docker.sh /path/to/high-throughput-febio/sample_condor_config.local`. It will take some time to download the Docker image and initialize. Once it says "Starting Condor... done", then the machine will take about 20 seconds to add to the condor network.
 - To remove your machine from the network and stop the docker image, run `./stop_docker.sh`
 - To run on startup, add `cd /absolute/path/to/this/directory && ./run_docker.sh <condor config file>` to `/etc/rc.local` (Linux only) on your machine. 
 
@@ -79,6 +79,23 @@ slot8@medialab-3Ma LINUX      X86_64 Unclaimed Idle      0.000  996  0+01:00:03
 ```
 
 ### Setting condor_config.local
+
+CONDOR_HOST points to the IP address of the central manager. DAEMON_LIST is configured as follows:  
+
+- `MASTER` should *always* be present on every machine. It starts and controls the rest of the daemons.  
+- `STARTD` is added if you wish for the machine to be able to execute jobs
+- `SCHEDD` is added if you wish for the machine to be able to submit jobs
+- `COLLECTOR` is only present on the central manager. It collects "ads" from the nodes that contain the specs of the nodes  
+- `NEGOTIATOR` is only present on the central manager. It takes the scheduled jobs and "negotiates" which jobs to send to which nodes.
+
+## Daemon Configurations
+
+Machine just for executing jobs: `DAEMON_LIST = MASTER, STARTD`  
+Just for submitting jobs: `DAEMON_LIST = MASTER, SCHEDD`  
+To submit and execute jobs: `DAEMON_LIST = MASTER, STARTD, SCHEDD`  
+Central manager: `DAEMON_LIST = MASTER, COLLECTOR, NEGOTIATOR, SCHEDD (optional: STARTD if you want your central manager to execute jobs)`
+
+### Choosing specifications for nodes  
 
 To set the specs on each machine, modify `/etc/condor/condor_config.local` with the following settings (by default the machine will evenly divide its RAM among its CPUS and create a machine on HTCondor for each):
 

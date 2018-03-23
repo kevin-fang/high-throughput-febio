@@ -17,7 +17,7 @@ Complete list of steps to follow from INSTALL.md:
 1. Set up a central manager (either using the [Docker](INSTALL.md#user-content-initializing-through-docker) or [native](INSTALL.md#user-content-native-installation) method). In `condor_config.local`, set `DAEMON_LIST` to `MASTER, COLLECTOR, NEGOTIATOR, SCHEDD` and optionally add `STARTD` if you want your central manager to be able to execute jobs to. Record the IP address of this computer. Condor dislikes hostnames, so you'll probably want to give this machine a static IP, as all the nodes will connect to it.
 2. Set up execution machines (either Docker/native) using the instructions in INSTALL.md. Set [slot definitions](INSTALL.md#user-content-setting-condor_configlocal) if needed. In `condor_config.local`, set the CONDOR_HOST variable to the IP address of the central manager. If you are deploying to a large configuration, it would be easiest to distribute the same configuration file to all the machines.
 3. Once the native/Docker installations are all up, run `condor_status` on the central manager and make sure that you see all the machines.  
-4. Follow the Python script instructions below for creating jobs.
+4. Follow the Python script instructions below for creating jobs. 
 
 --- 
 
@@ -26,8 +26,8 @@ Complete list of steps to follow from INSTALL.md:
 `generate_from_directory.py` generates a single submission file that creates a job to run analysis on several .feb files in a directory. It takes the following arguments:  
 - `--folder` (required) points to the directory containing the .feb files (e.g. `--folder ./files`).
 - `--project_name` (optional) sets a project name for the output job file. Default is `job.sub`.
-- `--ram_req` (optional) sets a RAM requirement in megabytes for computers able to execute the job.
-- `--cpu_req` (optional) sets a CPU requirement in number of cores for computers able to execute the job.
+- `--ram_req` (optional) sets a RAM requirement in megabytes for computers able to execute the job (e.g. --ram_req 1024).
+- `--cpu_req` (optional) sets a CPU requirement in number of cores for computers able to execute the job (e.g. --cpu_req 4).
 - `--run` - if this is included, immediately after generating the job submission file the program will submit the job to the cluster.
 
 The generated files will be located in a directory called `output/`.
