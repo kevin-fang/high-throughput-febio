@@ -12,14 +12,16 @@ For more instructions on creating `condor_config.local`, see [setting condor_con
 
 Once the condor configuration file is created, follow one of these two methods:
 
-### Initializing through Docker (Tested on Linux; might work on Windows. Doesn't work on Mac):  
+### Initializing through Docker  
+(Tested on Linux; might work on Windows. Doesn't work on Mac.)  
 - Install [Docker](https://www.docker.com/) on your machine. 
 - Add your user to the Docker group (`sudo usermod -aG docker <your username>`)
 - Run `./run_docker.sh /absolute/path/to/this/directory/condor_config.local` to add your machine to the network. For example, to run a Docker container using the sample condor config file, you would run `./run_docker.sh /path/to/high-throughput-febio/sample_condor_config.local`. It will take some time to download the Docker image and initialize.
 - To remove your machine from the network and stop the docker image, run `./stop_docker.sh`
 - To run on startup, add `cd /absolute/path/to/this/directory && ./run_docker.sh <condor config file>` to `/etc/rc.local` (Linux only) on your machine. 
 
-### Native Installation (Linux only):  
+### Native Installation  
+(Linux only)  
 - For Ubuntu/Debian: install HTCondor with `sudo apt-get install htcondor` For other Linux distros, you may need to [build from source](https://htcondor-wiki.cs.wisc.edu/index.cgi/wiki). When installing, **select "no"** when "Manage installation of HTCondor automatically" appears. 
 - Move the `condor_config.local` file to `/etc/condor/condor_config.local`  
 - Start the condor instance with `sudo /etc/init.d/condor start`

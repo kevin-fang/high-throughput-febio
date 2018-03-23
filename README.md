@@ -15,7 +15,7 @@ This repository uses [HTCondor](https://research.cs.wisc.edu/htcondor/), high th
 [INSTALL.md](INSTALL.md) contains important installation instructions on how to set up the Condor network.  
 Complete list of steps to follow from INSTALL.md:  
 1. Set up a central manager (either using the [Docker](INSTALL.md#user-content-initializing-through-docker)) or [native](INSTALL.md#user-content-native-installation) method). In `condor_config.local`, set `DAEMON_LIST` to `MASTER, COLLECTOR, NEGOTIATOR, SCHEDD` and optionally addd `STARTD` if you want your central manager to be able to execute jobs to. Record the IP address of this computer.
-2. Set up execution machines (either Docker/native). Set [slot definitions](user-content-setting-condor_configlocal). In `condor_config.local`, set CONDOR_HOST equal to the IP address of the central manager. If you are deploying to a large configuration, it would be easiest to distribute the same configuration file to all the machines.
+2. Set up execution machines (either Docker/native). Set [slot definitions](INSTALL.md#user-content-setting-condor_configlocal). In `condor_config.local`, set CONDOR_HOST equal to the IP address of the central manager. If you are deploying to a large configuration, it would be easiest to distribute the same configuration file to all the machines.
 3. Once the native/Docker installations are all up, run `condor_status` on the central manager and make sure that you see all the machines.  
 4. Follow the Python script instructions below for creating jojbs.
 
